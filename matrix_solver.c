@@ -390,12 +390,20 @@ int main()
 	free(inverse);
 
 
+	
+	// long int numberOfcoefficients;
+	// get_integer("Enter Number of Coefficients : ", &numberOfcoefficients);
+	// double **system_matrix = (double **)calloc(numberOfcoefficients, sizeof(double));
+	// system_matrix = n_coefficients(numberOfcoefficients);
+	// show_matrix(system_matrix, numberOfcoefficients, numberOfcoefficients+1);
+	// for (int i = 0; i < numberOfcoefficients; i++)
+	// 	free(system_matrix[i]);
+	// free(system_matrix);
+
+
+
+
 	for (int i = 0; i < rows; i++)
 		free(matrix[i]);
 	free(matrix);
-	// int numberOfcoefficients;
-	// get_integer("Enter Number of Coefficients : ", &numberOfcoefficients);
-	// double *system_matrix = (double *)calloc(numberOfcoefficients, sizeof(double));
-	// system_matrix = n_coefficients(numberOfcoefficients);
-	// show_matrix(system_matrix, numberOfcoefficients, numberOfcoefficients+1);
 }
