@@ -23,7 +23,7 @@ typedef struct qu {
 } Queue;
 
 void destory_queue(Queue* q);
-Queue* contrust_queue();
+Queue* construct_queue();
 void print_int_queue(Queue* self);
 void enqueue(Queue* self, void* data);
 void* dequeue(Queue* self);
@@ -32,7 +32,7 @@ boolean isEmpty(Queue* self);
 Node* construct_node(void* data);
 
 // int main(int argc, char* argv[]) {
-//     Queue* myq = contrust_queue();
+//     Queue* myq = construct_queue();
 //     myq->print = print_int_queue;
 //     for (int i = 1; i <= 10; i++) {
 //         int* num = (int*)malloc(sizeof(int));
@@ -56,7 +56,7 @@ void destory_queue(Queue* q) {
     free(q);
 }
 
-Queue* contrust_queue() {
+Queue* construct_queue() {
     Queue* new_queue = (Queue*)malloc(sizeof(Queue));
 
     new_queue->head = NULL;
