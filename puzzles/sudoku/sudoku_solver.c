@@ -96,33 +96,34 @@ int main(int argc, char *arv[]) {
         return 1;
     }
 
-    for (int i = 0; i < SIZE; i++) {
-        for (int j = 0; j < SIZE; j++) {
-            char input[20];
-            if (fscanf(f, "%19s", input) != 1) {
-                printf("Invalid input file !!\n");
-                fclose(f);
-                return 1;
+    int board_num;
+    while (fscanf(f, "%d", &board_num) == 1) {
+        for (int i = 0; i < SIZE; i++) {
+            for (int j = 0; j < SIZE; j++) {
+                char input[20];
+                if (fscanf(f, "%19s", input) != 1) {
+                    printf("Invalid input file !!\n");
+                    fclose(f);
+                    return 1;
+                }
+    
+                if (input[0] == '_') board[i][j] = EMPTY;
+                else board[i][j] = atoi(input);
             }
-
-            if (input[0] == '_') board[i][j] = EMPTY;
-            else board[i][j] = atoi(input);
+        }
+        printf("\n============================== BOARD %d =============================\n", board_num);
+        printf("Before solving:\n");
+        print_board(board);
+    
+        int i = 0, j = 0;
+        if (solve(board, &i, &j)) {
+            printf("After solving:\n");
+            print_board(board);
+        }
+        else {
+            printf("No solution found !!\n");
         }
     }
     fclose(f);
-
-    printf("Before solving:\n");
-    print_board(board);
-
-    int i = 0, j = 0;
-    if (solve(board, &i, &j)) {
-        printf("After solving:\n");
-        print_board(board);
-    }
-    else {
-        printf("No solution found !!\n");
-    }
-
     return 0;
-
 }
