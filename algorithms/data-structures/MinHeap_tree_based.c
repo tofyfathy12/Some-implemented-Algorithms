@@ -5,10 +5,6 @@
 #include <string.h>
 #include "Queue.h"
 
-#define MID_SPACING 5
-#define LEFT_SPACING 5
-#define MAX_DIGITS_NUM 5
-
 #define MIN_GAP 4
 
 typedef struct TreeNode {
@@ -308,44 +304,7 @@ long long mypow(long long base, long long power) {
     return result;
 }
 
-int **get_heap_levels(Heap *heap) {
-    int levels_num = log2(heap->heapsize) + 1;
-    int **levels = (int **)malloc((levels_num + 1) * sizeof(int *));
-    int levels_idx = 0;
-
-    Queue *q = construct_queue();
-    q->enqueue(q, heap->root);
-
-    int level_size = 1;
-    int *level = (int *)malloc((level_size + 1) * sizeof(int));
-    int cur_level_idx = 0;
-
-    while (!isEmpty(q)) {
-        if (cur_level_idx == level_size) {
-            level[cur_level_idx] = -1;
-            cur_level_idx = 0;
-            levels[levels_idx++] = level;
-            level_size *= 2;
-            level = (int *)malloc((level_size + 1) * sizeof(int));
-        }
-
-        TreeNode *node = (TreeNode *) q->dequeue(q);
-        level[cur_level_idx++] = node->val;
-
-        if (node->left != NULL)
-            q->enqueue(q, node->left);
-        if (node->right != NULL)
-            q->enqueue(q, node->right);
-    }
-    level[cur_level_idx] = -1;
-    levels[levels_idx++] = level;
-    levels[levels_idx] = NULL;
-
-    destory_queue(q);
-    return levels;
-}
-
-TreeNode ***get_heap_levels_as_nodes(Heap *heap) {
+TreeNode ***get_heap_levels(Heap *heap) {
     int levels_num = log2(heap->heapsize) + 1;
     TreeNode ***levels = (TreeNode ***)malloc((levels_num + 1) * sizeof(TreeNode **));
     int levels_idx = 0;
@@ -383,25 +342,7 @@ TreeNode ***get_heap_levels_as_nodes(Heap *heap) {
 }
 
 void print_heap_levels(Heap *heap) {
-    int **levels = get_heap_levels(heap);
-
-    int levels_idx = 0;
-    while (levels[levels_idx] != NULL) {
-        printf("Level %d:\n", levels_idx + 1);
-        int level_idx = 0;
-        while (levels[levels_idx][level_idx] != -1) {
-            printf("%d ", levels[levels_idx][level_idx]);
-            level_idx++;
-        }
-        printf("\n");
-        free(levels[levels_idx]);
-        levels_idx++;
-    }
-    free(levels);
-}
-
-void print_heap_levels_as_nodes(Heap *heap) {
-    TreeNode ***levels = get_heap_levels_as_nodes(heap);
+    TreeNode ***levels = get_heap_levels(heap);
 
     int levels_idx = 0;
     while (levels[levels_idx] != NULL) {
@@ -426,13 +367,6 @@ void print_heap_as_array(Heap *heap) {
     printf("\n");
 }
 
-void print_multiple(char c, int times) {
-    while (times > 0) {
-        printf("%c", c);
-        times--;
-    }
-}
-
 char *sprint_multiple(char *dst, char c, int times) {
     for (int i = 0; i < times; i++) {
         dst[i] = c;
@@ -441,13 +375,7 @@ char *sprint_multiple(char *dst, char c, int times) {
     return dst + times;
 }
 
-char *sprint_num(char *dst, int num) {
-    sprintf(dst, "%d", num);
-    int length = strlen(dst);
-    return dst + length;
-}
-
-char *sprint_num2(char *dst, TreeNode *node) { // assumes you handle null-terminators yourself
+char *sprint_num(char *dst, TreeNode *node) { // assumes you handle null-terminators yourself
     int length = node->width;
     int num = node->val;
     for (int i = length - 1; i >= 0; i--) {
@@ -459,19 +387,16 @@ char *sprint_num2(char *dst, TreeNode *node) { // assumes you handle null-termin
     return dst + length;
 }
 
-//              5           --> left_spacing = right_spacing = prev_left_spacing + (prev_ladder_len + 1) = 8 + (5 + 1) = 14
-//             / \          --> spacing = 1 ]] ladder_len = (prev_mid_spacing - 1) / 2 = (11 - 1) / 2 = 5
-//            /   \         --> spacing = 3 ]] ladder_len = (prev_mid_spacing - 1) / 2 = (11 - 1) / 2 = 5
-//           /     \        --> spacing = 5 ]] ladder_len = (prev_mid_spacing - 1) / 2 = (11 - 1) / 2 = 5
-//          /       \       --> spacing = 7 ]] ladder_len = (prev_mid_spacing - 1) / 2 = (11 - 1) / 2 = 5
-//         /         \      --> spacing = 9 ]] ladder_len = (prev_mid_spacing - 1) / 2 = (11 - 1) / 2 = 5
-//        2           4     --> left_spacing = right_spacing = prev_left_spacing + (prev_ladder_len + 1) = 5 + (2 + 1) = 8, mid_spacing = prev_mid_spacing + (prev_ladder_len + 1)*2 = 5 + (2 + 1)*2 = 11
-//       / \         / \    --> spacing = 1 ]] ladder_len = (prev_mid_spacing - 1) / 2 = (5 - 1) / 2 = 2
-//      /   \       /   \   --> spacing = 3 ]] ladder_len = (prev_mid_spacing - 1) / 2 = (5 - 1) / 2 = 2
-//     8     2     9     10 --> left_spacing = right_spacing = 5, spacing = 5, 2^lvl + spacing*(2^lvl - 1)
-
-// size of each line = 2^lvl + spacing*(2^lvl + 1)
-// number of lines = number of levels + int(1st_spacing / 2) + int(2nd spacing / 2) + ....
+//              2           --> root center = absolute_center; start = center - width/2
+//             / \          --> slashes are drawn one per row until child center
+//            /   \         --> left slash writes at node->start - i - 1
+//           /     \        --> right slash writes at node->start + i + 1
+//          /       \       --> distance = abs(parent_center - child_center)
+//         /         \      --> lines_num adds max(left_distance, right_distance)
+//        3           4     --> child centers = parent_center +/- child->center_offset
+//       / \         / \    --> center_offset comes from left_width + MIN_GAP/2
+//      /   \       /   \   --> subtree_width = max(node width, left + MIN_GAP + right)
+//     8     5     9     10 --> screen width = root->subtree_width; values printed at start
 
 void debug_screen(int lines_num, int line_size, char screen[lines_num][line_size]) {
     for (int i = 0; i < lines_num; i++) {
@@ -491,88 +416,6 @@ void debug_screen(int lines_num, int line_size, char screen[lines_num][line_size
         printf("\n");
     }
     printf("\n");
-}
-
-void print_heap_as_tree(Heap *heap) {
-    int levels_num = log2(heap->heapsize) + 1;
-
-    int prev_mid_spacing = MID_SPACING;
-    int lines_num = levels_num;
-    for (int i = 0; i < levels_num - 1; i++) {
-        int ladder_len = (prev_mid_spacing / 2);
-        lines_num += ladder_len;
-        prev_mid_spacing = prev_mid_spacing + (ladder_len + 1)*2;
-    }
-
-    int last_level_elements_num = mypow(2, (long long) (levels_num - 1));
-    int line_size = last_level_elements_num*MAX_DIGITS_NUM + MID_SPACING * (last_level_elements_num + 1) + 1;
-
-    char screen[lines_num][line_size];
-    int line_idx = lines_num - 1;
-    int **levels = get_heap_levels(heap);
-
-    prev_mid_spacing = MID_SPACING;
-    int prev_left_spacing = LEFT_SPACING;
-    for (int levels_idx = levels_num - 1; levels_idx >= 0; levels_idx--) {
-        int *level = levels[levels_idx];
-        char *next_dst = screen[line_idx];
-
-        for (int i = 0; i < last_level_elements_num && level[i] != -1; i += 2) {
-            int left = level[i];
-            int right = (level[i + 1] != -1) ? level[i + 1] : -1;
-
-            next_dst = sprint_multiple(next_dst, ' ', prev_left_spacing);
-
-            next_dst = sprint_num(next_dst, left);
-
-            next_dst = sprint_multiple(next_dst, ' ', prev_mid_spacing);
-
-            if (right != -1) next_dst = sprint_num(next_dst, right);
-        }
-
-
-        line_idx--;
-        if (line_idx < 0) {
-            break;
-        }
-        next_dst = screen[line_idx];
-
-        int ladder_len = prev_mid_spacing / 2;
-        for (int i = 0; i < ladder_len; i++) {
-            for (int l = 0; l < last_level_elements_num && level[l] != -1; l += 2) {
-
-                next_dst = sprint_multiple(next_dst, ' ', prev_left_spacing + i + 1);
-
-                *next_dst = '/';
-                next_dst++;
-                *next_dst = '\0';
-
-                next_dst = sprint_multiple(next_dst, ' ', prev_mid_spacing - i*2 - 2);
-
-                *next_dst = '\\';
-                next_dst++;
-                *next_dst = '\0';
-
-                next_dst = sprint_multiple(next_dst, ' ', ladder_len);
-            }
-            line_idx--;
-            next_dst = screen[line_idx];
-        }
-        prev_left_spacing = prev_left_spacing + ladder_len + 1;
-        prev_mid_spacing = prev_mid_spacing + (ladder_len + 1)*2;
-        last_level_elements_num /= 2;
-    }
-
-    int levels_idx = 0;
-    while (levels[levels_idx] != NULL) {
-        free(levels[levels_idx]);
-        levels_idx++;
-    }
-    free(levels);
-
-    for (int i = 0; i < lines_num; i++) {
-        printf("%s\n", screen[i]);
-    }
 }
 
 int max(int a, int b) {
@@ -606,13 +449,9 @@ void calculate_abs_centers(TreeNode *root) {
     }
 }
 
-void print_heap_as_tree2(Heap *heap) {
+void print_heap_as_tree(Heap *heap) {
     int levels_num = log2(heap->heapsize) + 1;
-    TreeNode ***levels = get_heap_levels_as_nodes(heap);
-
-    printf("\n====================================\n");
-    print_heap_levels_as_nodes(heap);
-    printf("======================================\n");
+    TreeNode ***levels = get_heap_levels(heap);
     
     calculate_subtree_widths(heap->root);
     calculate_abs_centers(heap->root);
@@ -636,8 +475,6 @@ void print_heap_as_tree2(Heap *heap) {
         }
     }
 
-    printf("lines_num = %d\n", lines_num); //debugging
-
     char screen[lines_num][heap->root->subtree_width + 1];
     memset(screen, ' ', lines_num * (heap->root->subtree_width + 1) * sizeof(char));
     for (int i = 0; i < lines_num; i++)
@@ -651,14 +488,11 @@ void print_heap_as_tree2(Heap *heap) {
         int level_idx = 0;
         while (levels[levels_idx][level_idx] != NULL) {
             TreeNode *node = levels[levels_idx][level_idx];
-            sprint_num2(next_dst + node->start, node);
+            sprint_num(next_dst + node->start, node);
 
             if (levels[levels_idx + 1] != NULL) {
                 TreeNode *left = levels[levels_idx + 1][level_idx*2];
                 TreeNode *right = levels[levels_idx + 1][level_idx*2 + 1];
-
-                if (left == NULL) printf("left is null\n");
-                if (right == NULL) printf("right is null\n");
 
                 int new_left_distance = 0;
                 int new_right_distance = 0;
@@ -697,7 +531,7 @@ void print_heap_as_tree2(Heap *heap) {
 }
 
 int main() {
-    int n = 14;
+    int n = 13;
     int arr[] = {5, 2, 4, 8, 9, 10, 3, 200, 18, 2000, 6, 19, 28};
 
     int *sorted_arr = heap_sort(arr, n);
@@ -720,9 +554,6 @@ int main() {
 
     printf("Heap as tree:\n");
     print_heap_as_tree(heap);
-
-    printf("Heap as tree version 2:\n");
-    print_heap_as_tree2(heap);
 
     destroy_heap(heap);
 }

@@ -1,24 +1,33 @@
 # Some Implemented Algorithms
 
-Collection of standalone C implementations of common algorithms and data structures.
+Collection of standalone C implementations of classic algorithms and data structures, kept as small runnable examples.
 
 ## Purpose and target
 - Purpose: Reference implementations and practice exercises.
-- Target: Learning and quick testing of classic algorithms.
+- Target: Learning, quick testing, and interview prep.
+
+## Requirements
+- C compiler (GCC, Clang, or MSVC).
+- Windows/macOS/Linux.
 
 ## What's inside
-- Sorting: QuickSort.c, MergeSort.c, InsertionSort.c
-- Data structures: Singly_LinkedList.c, Doubly_LinkedList.c, MinHeap_array_based.c, MinHeap_tree_based.c, Queue.h
-- Math and number theory: factorial.c, fib.c, GCD.c, num_to_base.c, matrix_solver.c
-- Other: kandane.c, RES_Cryptography2.c, RES_Crytpography.c
-- Prebuilt binaries: *.exe (if present)
+- algorithms/
+  - sorting/: QuickSort.c, MergeSort.c, InsertionSort.c
+  - data-structures/: Singly_LinkedList.c, Doubly_LinkedList.c, MinHeap_array_based.c, MinHeap_tree_based.c, Queue.h
+  - math/: factorial.c, fib.c, GCD.c, num_to_base.c, matrix_solver.c
+  - dynamic-programming/: kadane.c
+  - cryptography/: RES_Cryptography.c, RES_Cryptography2.c
+- puzzles/
+  - sudoku/: sudoku_solver.c, sudoku.txt
 
-## Build
+## Build and run (example)
 ```bash
-gcc file.c -o file
+cd algorithms/sorting
+gcc QuickSort.c -o QuickSort
+./QuickSort
 ```
 
-## Run
-```bash
-./file
-```
+
+## Naming and layout
+- One algorithm per file, minimal dependencies.
+- Headers are kept alongside their data structure implementations.
