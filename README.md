@@ -1,33 +1,58 @@
-# Some Implemented Algorithms
+# 🚀 Some Implemented Algorithms
 
-Collection of standalone C implementations of classic algorithms and data structures, kept as small runnable examples.
+![Language](https://img.shields.io/badge/language-C-blue.svg)
 
-## Purpose and target
-- Purpose: Reference implementations and practice exercises.
-- Target: Learning, quick testing, and interview prep.
+A collection of standalone C implementations of classic algorithms, data structures, and puzzles. These are kept as small, runnable examples designed for clarity and efficiency.
 
-## Requirements
-- C compiler (GCC, Clang, or MSVC).
-- Windows/macOS/Linux.
+## 🎯 Purpose and Target
 
-## What's inside
-- algorithms/
-  - sorting/: QuickSort.c, MergeSort.c, InsertionSort.c
-  - data-structures/: Singly_LinkedList.c, Doubly_LinkedList.c, MinHeap_array_based.c, MinHeap_tree_based.c, Queue.h
-  - math/: factorial.c, fib.c, GCD.c, num_to_base.c, matrix_solver.c
-  - dynamic-programming/: kadane.c
-  - cryptography/: RES_Cryptography.c, RES_Cryptography2.c
-- puzzles/
-  - sudoku/: sudoku_solver.c, sudoku.txt
+- **Purpose**: Reference implementations, practice exercises, and exploring optimizations.
+- **Target**: Learning, quick testing, and technical interview preparation.
 
-## Build and run (example)
+## ⚙️ Requirements
+
+- **C Compiler**: GCC, Clang, or MSVC.
+- **OS**: Windows, macOS, or Linux.
+
+## 📂 What's Inside
+
+### 🧠 Algorithms
+
+* **Sorting** (`algorithms/sorting/`)
+  * `QuickSort.c`, `MergeSort.c`, `InsertionSort.c`
+* **Data Structures** (`algorithms/data-structures/`)
+  * `Singly_LinkedList.c`, `Doubly_LinkedList.c`
+  * `MinHeap_array_based.c`, `MinHeap_tree_based.c`
+  * `Queue.h`
+* **Math** (`algorithms/math/`)
+  * `binomial.c` — *(Binomial coefficient implementation)*
+  * `factorial.c`, `fib.c`, `GCD.c`
+  * `num_to_base.c`, `matrix_solver.c`
+* **Dynamic Programming** (`algorithms/dynamic-programming/`)
+  * `kadane.c`
+* **Cryptography** (`algorithms/cryptography/`)
+  * `RES_Cryptography.c`, `RES_Cryptography2.c`
+
+### 🧩 Puzzles
+
+* **Sudoku** (`puzzles/sudoku/`)
+  * `sudoku_solver.c`
+  * `sudoku.txt`
+
+## 🚀 Build and Run (Example)
+
 ```bash
+# Navigate to the target directory
 cd algorithms/sorting
+
+# Compile the C file
 gcc QuickSort.c -o QuickSort
+
+# Run the executable
 ./QuickSort
 ```
 
+## 📐 Naming and Layout
 
-## Naming and layout
-- One algorithm per file, minimal dependencies.
-- Headers are kept alongside their data structure implementations.
+- **Simplicity**: One algorithm per file with minimal dependencies.
+- **Organization**: Headers are kept alongside their corresponding data structure implementations.
